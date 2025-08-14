@@ -6,9 +6,8 @@ public class PlayerAircraftInput : MonoBehaviour
 {
   
   private AircraftMovement m_Movement;
-  public float mouseSensitivity = 115f;
-
-  private float throttle = 0f;
+  public float mouseSensitivity = 10f;
+  
   
   void Awake()
   {
@@ -26,13 +25,14 @@ public class PlayerAircraftInput : MonoBehaviour
 
   }
 
-  void HandleInput()
+  void HandleInput() //Sending data to the Aircraft movement that adds the forces from the player input
   {
     // Throttle
     if (Input.GetKey(KeyCode.Space))
-      throttle = Mathf.Clamp01(throttle + 10f);
+      m_Movement.AdjustThrottle(+1f);
     if (Input.GetKey(KeyCode.S))
-      throttle = Mathf.Clamp01(throttle - 20f);
+      m_Movement.AdjustThrottle(-1f);
+     
     
     
     float yaw = 0f;
@@ -46,7 +46,7 @@ public class PlayerAircraftInput : MonoBehaviour
     float roll = Input.GetKey(KeyCode.Q) ? -1f : Input.GetKey(KeyCode.E) ? 1f : 0f;
 
     // Apply movement to AircraftMovement
-    m_Movement.Move(throttle, roll, pitch, yaw);
+    m_Movement.Move(roll, pitch, yaw);
     
 
   }

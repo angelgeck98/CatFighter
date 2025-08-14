@@ -6,26 +6,38 @@ using UnityEngine;
 public class AircraftMovement : MonoBehaviour
 {
     public float throttleIncrement = 0.1f;
-    public float maxThrottle = 200f;
+    public float maxThrust = 200f;
     public float responsiveness = 10f;
+
+    private float m_Throttle;
+   
     
     
-    Rigidbody rb;
+    private Rigidbody rb;
     
-    private float ResponseModifier => (rb.mass / 10f) * responsiveness;
+    private float responseModifier => (rb.mass / 10f) * responsiveness;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    public void Move(float throttle, float roll, float pitch, float yaw)
+    public void AdjustThrottle(float amount)
     {
-        rb.AddForce(transform.forward * maxThrottle * throttle);
-        rb.AddTorque(transform.up * yaw * ResponseModifier);
-        rb.AddTorque(transform.right * pitch * ResponseModifier);
-        rb.AddTorque(-transform.forward * roll * ResponseModifier);
-        
+        m_Throttle = Mathf.Clamp(m_Throttle + amount, 0f, 100f);
+
+        Debug.Log($"Throttle: {m_Throttle}%");
     }
-    
+
+
+    public void Move(float roll, float pitch, float yaw)
+    {
+        rb.AddForce(transform.forward * (maxThrust * m_Throttle));
+
+        rb.AddTorque(transform.up * (yaw * responseModifier));
+        rb.AddTorque(transform.right * (pitch * responseModifier));
+        rb.AddTorque(-transform.forward * (roll * responseModifier));
+
+    }
+
 }
